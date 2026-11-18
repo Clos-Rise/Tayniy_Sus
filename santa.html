@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тайный Санта 🎁</title>
+<style>
+ body{background:#13131a;color:#eee;font-family:system-ui,sans-serif;display:flex;
+      min-height:100vh;align-items:center;justify-content:center;margin:0}
+ .box{background:#1e1e2a;padding:30px;border-radius:16px;text-align:center;width:300px}
+ input{width:100%;padding:12px;font-size:20px;text-align:center;text-transform:uppercase;
+       border:none;border-radius:10px;margin:14px 0;box-sizing:border-box}
+ button{width:100%;padding:12px;font-size:16px;border:none;border-radius:10px;
+        background:#e23b3b;color:#fff;cursor:pointer}
+ #out{margin-top:18px;font-size:22px;min-height:30px}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>🎄 Тайный Санта</h2>
+  <p>Введи свой личный код:</p>
+  <input id="code" maxlength="5" placeholder="XXXXX">
+  <button onclick="go()">Узнать 🎁</button>
+  <div id="out"></div>
+</div>
+<script>
+const DATA = ["EnMXEAt7XzAvIiBBLDc=", "FAkXGhd9PzYjISglKSc9", "ZBcfbRENID5fJFY4fw==", "YRIdAngIMTo4Xl0Mam8O", "AQt6YAVoOFFBN2N+DAw=", "GXd2BARwDkAxNz4O", "EXN6BQ14QUA4PyoCBGJ5", "BBMZBXltPyMjSiUN", "BRl3FQlsP1wvLSQ5VR4vJDFPJD0l", "ZQQKYxgMNyVEMVMrL1YrQw=="];
+
+function decrypt(blob, key){
+  const raw = atob(blob), k = new TextEncoder().encode(key);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i) ^ k[i % k.length];
+  try { return new TextDecoder("utf-8", {fatal:true}).decode(bytes); } catch(e){ return ""; }
+}
+
+function go(){
+  const key = document.getElementById("code").value.trim().toUpperCase();
+  const out = document.getElementById("out");
+  for (const blob of DATA){
+    const t = decrypt(blob, key);
+    if (t.startsWith("SANTA:")){
+      out.innerHTML = "Ты даришь подарок:<br><b>" + t.slice(6) + "</b> 🎁";
+      return;
+    }
+  }
+  out.textContent = "Неверный код :(";
+}
+document.getElementById("code").addEventListener("keydown", e => { if(e.key==="Enter") go(); });
+</script>
+</body>
+</html>
